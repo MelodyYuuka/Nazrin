@@ -12,6 +12,9 @@
 <!-- markdownlint-disable-next-line MD036 -->
 **中文分词工具 [jieba-rs](https://github.com/messense/jieba-rs) Binding of Python**
 
+![pypi-publish](https://github.com/MelodyYuuka/Nazrin/actions/workflows/pypi-publish.yml/badge.svg)
+[![PyPI](https://img.shields.io/pypi/v/Nazrin.svg)](https://pypi.org/project/Nazrin)
+
 </div>
 
 相比纯 Python 实现的 [jieba](https://github.com/fxsjy/jieba)，速度更快，在分词过程中释放了 GIL，可适用于多线程处理
