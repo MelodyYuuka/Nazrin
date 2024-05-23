@@ -1,6 +1,9 @@
-use std::{fs::File, io::BufReader};
+use jieba_rs::KeywordExtractConfig;
+use std::{fs::File, io::BufReader, path::PathBuf};
 
-use pyo3::prelude::*;
+use pyo3::{prelude::*, types::PyList};
+
+mod tfidf;
 
 #[pyclass(subclass)]
 struct Nazrin {
@@ -27,7 +30,7 @@ impl Nazrin {
         py.allow_threads(move || self.jieba.add_word(word, freq, tag))
     }
 
-    fn load_userdict(&mut self, py: Python, path: &str) -> PyResult<()> {
+    fn load_userdict(&mut self, py: Python, path: PathBuf) -> PyResult<()> {
         py.allow_threads(move || {
             let file = File::open(path)?;
             let mut reader = BufReader::new(file);
@@ -101,8 +104,56 @@ impl Nazrin {
     }
 }
 
+#[pyclass]
+struct TFIDF {
+    inner: tfidf::TfIdf,
+}
+
+#[pymethods]
+impl TFIDF {
+    #[new]
+    #[pyo3(signature = (path = None))]
+    fn new(py: Python, path: Option<PathBuf>) -> PyResult<Self> {
+        py.allow_threads(|| {
+            let mut buffer = None;
+            if let Some(path) = path {
+                buffer = Some(BufReader::new(File::open(path)?));
+            }
+            Ok(Self {
+                inner: tfidf::TfIdf::new(buffer.as_mut(), KeywordExtractConfig::default()),
+            })
+        })
+    }
+
+    fn load_dict(&mut self, py: Python, path: PathBuf) -> PyResult<()> {
+        py.allow_threads(|| {
+            let mut buffer = BufReader::new(File::open(path)?);
+            self.inner.load_dict(&mut buffer)?;
+            Ok(())
+        })
+    }
+
+    #[pyo3(signature = (nazrin, sentence, top_k = 20, allow_pos = None))]
+    fn extract_tags(
+        &self,
+        nazrin: &Nazrin,
+        sentence: &str,
+        top_k: usize,
+        allow_pos: Option<&Bound<'_, PyList>>,
+    ) -> PyResult<Vec<(String, f64)>> {
+        let allow_pos: Vec<String> = match allow_pos {
+            Some(allow_pos) => allow_pos.extract()?,
+            None => Vec::new(),
+        };
+        Ok(self
+            .inner
+            .extract_keywords(&nazrin.jieba, sentence, top_k, allow_pos))
+    }
+}
+
 #[pymodule]
 fn nazrin(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Nazrin>()?;
+    m.add_class::<TFIDF>()?;
     Ok(())
 }

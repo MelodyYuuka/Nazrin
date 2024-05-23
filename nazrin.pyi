@@ -1,4 +1,5 @@
 from typing import Literal
+from pathlib import Path
 
 class Nazrin:
     def __init__(self) -> None: ...
@@ -17,7 +18,7 @@ class Nazrin:
 
         """
         ...
-    def load_userdict(self, path: str) -> None:
+    def load_userdict(self, path: str | Path) -> None:
         """
         说明：
 
@@ -110,3 +111,46 @@ class Nazrin:
             * ``hmm``: 是否使用隐马尔可夫模型. 默认为 True.
 
         """
+        ...
+
+class TFIDF:
+    def __init__(self, path: str | Path) -> None: ...
+    def load_dict(self, path: str | Path) -> None:
+        """
+        说明：
+
+            加载用户字典
+
+        参数:
+
+            * ``path``: 字典路径
+
+        """
+        ...
+    def extract_tags(
+        self,
+        nazrin: Nazrin,
+        sentence: str,
+        top_k: int = 20,
+        allow_pos: list[str] | None = None,
+    ) -> list[tuple[str, float]]:
+        """
+        说明：
+
+            使用TF-IDF算法从句子中提取关键词
+
+        参数:
+
+            * ``nazrin``: 要使用的分词器
+            * ``sentence``: 句子
+            * ``top_k``: 最多返回的关键词数. 默认为 20.
+            * ``allowPOS``: 允许的POS表;['ns'， 'n'， 'vn'， 'v'，'nr']。
+                            如果w的POS不在此列表中，则会被过滤。
+
+        """
+        ...
+
+__all__ = (
+    "Nazrin",
+    "TFIDF",
+)
