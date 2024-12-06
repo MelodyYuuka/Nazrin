@@ -1,6 +1,6 @@
 [package]
 name = "nazrin"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["MelodyYuuka <melody@yunmengdu.cn>"]
 edition = "2021"
 description = "rust-participle"
