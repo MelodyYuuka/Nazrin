@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 jieba-rs = { version = "0.7.0", features = ["tfidf"]}
-pyo3 = { version = "0.23", features = ["extension-module"] }
+pyo3 = { version = "0.24", features = ["extension-module"] }
 ordered-float = "4.5.0"
 ahash = "0.8"
 
