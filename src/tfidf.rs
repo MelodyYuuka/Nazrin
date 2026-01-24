@@ -1,5 +1,3 @@
-// 对 https://github.com/messense/jieba-rs/blob/main/src/keywords/tfidf.rs 的改写以符合使用习惯
-
 use std::cmp::Ordering;
 use std::collections::{BTreeSet, BinaryHeap};
 use std::io::{self, BufRead, BufReader};

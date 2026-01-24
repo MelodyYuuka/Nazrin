@@ -27,11 +27,11 @@ impl Nazrin {
         freq: Option<usize>,
         tag: Option<&str>,
     ) -> usize {
-        py.allow_threads(move || self.jieba.add_word(word, freq, tag))
+        py.detach(move || self.jieba.add_word(word, freq, tag))
     }
 
     fn load_userdict(&mut self, py: Python, path: PathBuf) -> PyResult<()> {
-        py.allow_threads(move || {
+        py.detach(move || {
             let file = File::open(path)?;
             let mut reader = BufReader::new(file);
             match self.jieba.load_dict(&mut reader) {
@@ -47,31 +47,31 @@ impl Nazrin {
     }
 
     fn suggest_freq(&mut self, py: Python, segment: &str) -> usize {
-        py.allow_threads(move || self.jieba.suggest_freq(segment))
+        py.detach(move || self.jieba.suggest_freq(segment))
     }
 
     /// Cut the input text
     #[pyo3(signature = (text, hmm = true))]
     fn cut<'a>(&self, py: Python, text: &'a str, hmm: bool) -> Vec<&'a str> {
-        py.allow_threads(move || self.jieba.cut(text, hmm))
+        py.detach(move || self.jieba.cut(text, hmm))
     }
 
     /// Cut the input text, return all possible words
     #[pyo3(signature = (text,))]
     fn cut_all<'a>(&self, py: Python, text: &'a str) -> Vec<&'a str> {
-        py.allow_threads(move || self.jieba.cut_all(text))
+        py.detach(move || self.jieba.cut_all(text))
     }
 
     /// Cut the input text in search mode
     #[pyo3(signature = (text, hmm = true))]
     fn cut_for_search<'a>(&self, py: Python, text: &'a str, hmm: bool) -> Vec<&'a str> {
-        py.allow_threads(move || self.jieba.cut_for_search(text, hmm))
+        py.detach(move || self.jieba.cut_for_search(text, hmm))
     }
 
     /// Tag the input text
     #[pyo3(signature = (text, hmm = true))]
     fn tag<'a>(&'a self, py: Python, text: &'a str, hmm: bool) -> Vec<(&'a str, &'a str)> {
-        py.allow_threads(move || {
+        py.detach(move || {
             self.jieba
                 .tag(text, hmm)
                 .into_iter()
@@ -94,7 +94,7 @@ impl Nazrin {
         } else {
             jieba_rs::TokenizeMode::Default
         };
-        py.allow_threads(move || {
+        py.detach(move || {
             self.jieba
                 .tokenize(text, tokenize_mode, hmm)
                 .into_iter()
@@ -114,7 +114,7 @@ impl TFIDF {
     #[new]
     #[pyo3(signature = (path = None))]
     fn new(py: Python, path: Option<PathBuf>) -> PyResult<Self> {
-        py.allow_threads(|| {
+        py.detach(|| {
             let mut buffer = None;
             if let Some(path) = path {
                 buffer = Some(BufReader::new(File::open(path)?));
@@ -126,7 +126,7 @@ impl TFIDF {
     }
 
     fn load_dict(&mut self, py: Python, path: PathBuf) -> PyResult<()> {
-        py.allow_threads(|| {
+        py.detach(|| {
             let mut buffer = BufReader::new(File::open(path)?);
             self.inner.load_dict(&mut buffer)?;
             Ok(())

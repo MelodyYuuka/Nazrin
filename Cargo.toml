@@ -1,8 +1,8 @@
 [package]
 name = "nazrin"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["MelodyYuuka <melody@yunmengdu.cn>"]
-edition = "2021"
+edition = "2024"
 description = "rust-participle"
 
 [lib]
@@ -10,9 +10,9 @@ name = "nazrin"
 crate-type = ["cdylib"]
 
 [dependencies]
-jieba-rs = { version = "0.7.0", features = ["tfidf"]}
-pyo3 = { version = "0.24", features = ["extension-module"] }
-ordered-float = "4.5.0"
+jieba-rs = { version = "0.8.0", features = ["tfidf"]}
+pyo3 = { version = "0.27", features = ["extension-module"] }
+ordered-float = "5.1"
 ahash = "0.8"
 
 [profile.release]
