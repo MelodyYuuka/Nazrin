@@ -1,5 +1,5 @@
-from typing import Literal
 from pathlib import Path
+from typing import Literal
 
 class Nazrin:
     def __init__(self) -> None: ...
@@ -151,6 +151,6 @@ class TFIDF:
         ...
 
 __all__ = (
-    "Nazrin",
     "TFIDF",
+    "Nazrin",
 )
