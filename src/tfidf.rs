@@ -68,17 +68,15 @@ impl TfIdf {
         let mut buf = String::new();
         let mut idf_heap = BinaryHeap::new();
         while dict.read_line(&mut buf)? > 0 {
-            let parts: Vec<&str> = buf.split_whitespace().collect();
-            if parts.is_empty() {
-                continue;
+            {
+                let mut parts = buf.split_whitespace();
+                if let Some(word) = parts.next() {
+                    if let Some(idf) = parts.next().and_then(|x| x.parse::<f64>().ok()) {
+                        self.idf_dict.insert(word.to_string(), idf);
+                        idf_heap.push(OrderedFloat(idf));
+                    }
+                }
             }
-
-            let word = parts[0];
-            if let Some(idf) = parts.get(1).and_then(|x| x.parse::<f64>().ok()) {
-                self.idf_dict.insert(word.to_string(), idf);
-                idf_heap.push(OrderedFloat(idf));
-            }
-
             buf.clear();
         }
 
