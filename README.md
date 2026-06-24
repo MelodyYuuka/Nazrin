@@ -181,7 +181,7 @@ In [6]: %timeit list(jieba.cut(data))
 3.77 ms ± 109 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
 
 In [7]: %timeit nazrin.cut(data)
-283 µs ± 14.5 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+155 µs ± 14.5 µs per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
 ```
 
 # 鸣谢

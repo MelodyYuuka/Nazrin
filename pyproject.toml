@@ -12,6 +12,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 
+[tool.uv]
+cache-keys = [{ file = "Cargo.toml" }]
 
 [tool.maturin]
 # Build artifacts with the specified Cargo profile
