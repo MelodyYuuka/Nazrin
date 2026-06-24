@@ -30,7 +30,7 @@ class Nazrin:
 
         """
         ...
-    def suggest_freq(self, word: str) -> None:
+    def suggest_freq(self, word: str) -> int:
         """
         说明：
 
@@ -98,7 +98,7 @@ class Nazrin:
         text: str,
         mode: Literal["search", "default"] = "default",
         hmm: bool = True,
-    ) -> list[str]:
+    ) -> list[tuple[str, int, int]]:
         """
         说明：
 
