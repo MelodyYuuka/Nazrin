@@ -136,6 +136,7 @@ impl TFIDF {
     #[pyo3(signature = (nazrin, sentence, top_k = 20, allow_pos = None))]
     fn extract_tags(
         &self,
+        py: Python,
         nazrin: &Nazrin,
         sentence: &str,
         top_k: usize,
@@ -145,9 +146,11 @@ impl TFIDF {
             Some(allow_pos) => allow_pos.extract()?,
             None => Vec::new(),
         };
-        Ok(self
-            .inner
-            .extract_keywords(&nazrin.jieba, sentence, top_k, allow_pos))
+        py.detach(|| {
+            Ok(self
+                .inner
+                .extract_keywords(&nazrin.jieba, sentence, top_k, allow_pos))
+        })
     }
 }
 
