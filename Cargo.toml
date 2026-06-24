@@ -1,6 +1,6 @@
 [package]
 name = "nazrin"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["MelodyYuuka <melody@yunmengdu.cn>"]
 edition = "2024"
 description = "rust-participle"
@@ -24,5 +24,5 @@ overflow-checks = false
 lto = true
 panic = 'unwind'
 incremental = false
-codegen-units = 16
+codegen-units = 1
 rpath = false
