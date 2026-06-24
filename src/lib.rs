@@ -52,55 +52,78 @@ impl Nazrin {
 
     /// Cut the input text
     #[pyo3(signature = (text, hmm = true))]
-    fn cut<'a>(&self, py: Python, text: &'a str, hmm: bool) -> Vec<&'a str> {
-        py.detach(move || self.jieba.cut(text, hmm).into_iter().map(|t| t.word).collect())
+    fn cut<'py>(&self, py: Python<'py>, text: &'py str, hmm: bool) -> PyResult<Bound<'py, PyList>> {
+        PyList::new(
+            py,
+            py.detach(move || self.jieba.cut(text, hmm).into_iter().map(|t| t.word)),
+        )
     }
 
     /// Cut the input text, return all possible words
     #[pyo3(signature = (text,))]
-    fn cut_all<'a>(&self, py: Python, text: &'a str) -> Vec<&'a str> {
-        py.detach(move || self.jieba.cut_all(text).into_iter().map(|t| t.word).collect())
+    fn cut_all<'py>(&self, py: Python<'py>, text: &'py str) -> PyResult<Bound<'py, PyList>> {
+        PyList::new(
+            py,
+            py.detach(move || self.jieba.cut_all(text).into_iter().map(|t| t.word)),
+        )
     }
 
     /// Cut the input text in search mode
     #[pyo3(signature = (text, hmm = true))]
-    fn cut_for_search<'a>(&self, py: Python, text: &'a str, hmm: bool) -> Vec<&'a str> {
-        py.detach(move || self.jieba.cut_for_search(text, hmm).into_iter().map(|t| t.word).collect())
+    fn cut_for_search<'py>(
+        &self,
+        py: Python<'py>,
+        text: &'py str,
+        hmm: bool,
+    ) -> PyResult<Bound<'py, PyList>> {
+        PyList::new(
+            py,
+            py.detach(move || {
+                self.jieba
+                    .cut_for_search(text, hmm)
+                    .into_iter()
+                    .map(|t| t.word)
+            }),
+        )
     }
 
     /// Tag the input text
     #[pyo3(signature = (text, hmm = true))]
-    fn tag<'a>(&'a self, py: Python, text: &'a str, hmm: bool) -> Vec<(&'a str, &'a str)> {
-        py.detach(move || {
-            self.jieba
-                .tag(text, hmm)
-                .into_iter()
-                .map(|t| (t.word, t.tag))
-                .collect()
-        })
+    fn tag<'py>(&self, py: Python<'py>, text: &'py str, hmm: bool) -> PyResult<Bound<'py, PyList>> {
+        PyList::new(
+            py,
+            py.detach(move || {
+                self.jieba
+                    .tag(text, hmm)
+                    .into_iter()
+                    .map(|t| (t.word, t.tag))
+            }),
+        )
     }
 
     /// Tokenize
     #[pyo3(signature = (text, mode = "default", hmm = true))]
-    fn tokenize<'a>(
+    fn tokenize<'py>(
         &self,
-        py: Python,
-        text: &'a str,
+        py: Python<'py>,
+        text: &'py str,
         mode: &str,
         hmm: bool,
-    ) -> Vec<(&'a str, usize, usize)> {
+    ) -> PyResult<Bound<'py, PyList>> {
         let tokenize_mode = if mode.to_lowercase() == "search" {
             jieba_rs::TokenizeMode::Search
         } else {
             jieba_rs::TokenizeMode::Default
         };
-        py.detach(move || {
-            self.jieba
-                .tokenize(text, tokenize_mode, hmm)
-                .into_iter()
-                .map(|t| (t.word, t.start, t.end))
-                .collect()
-        })
+        PyList::new(
+            py,
+            py.detach(move || {
+                self.jieba
+                    .tokenize(text, tokenize_mode, hmm)
+                    .into_iter()
+                    .map(|t| (t.word, t.start, t.end))
+            }),
+        )
     }
 }
 
