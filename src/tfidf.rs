@@ -104,12 +104,6 @@ impl Default for TfIdf {
 }
 
 impl TfIdf {
-    #[inline]
-    fn filter_word(&self, s: &str) -> bool {
-        s.chars().count() >= self.config.min_keyword_length()
-            && !self.config.stop_words().contains(&s.to_lowercase())
-    }
-
     pub fn extract_keywords(
         &self,
         jieba: &Jieba,
@@ -130,12 +124,16 @@ impl TfIdf {
                 continue;
             }
 
-            if !self.filter_word(t.word) {
+            if t.word.chars().count() < self.config.min_keyword_length() {
                 continue;
             }
 
-            let entry = term_freq.entry(t.word).or_insert(0);
-            *entry += 1;
+            // 已计入词频的词已通过停用词过滤，避免重复小写转换和查询。
+            if let Some(frequency) = term_freq.get_mut(t.word) {
+                *frequency += 1;
+            } else if !self.config.stop_words().contains(&t.word.to_lowercase()) {
+                term_freq.insert(t.word, 1);
+            }
         }
 
         let total: u64 = term_freq.values().sum();
